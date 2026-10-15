@@ -1,0 +1,31 @@
+[theme]
+base = "light"
+primaryColor = "#4338ca"
+backgroundColor = "#fbfbf9"
+secondaryBackgroundColor = "#f3f2ee"
+textColor = "#1d1d1f"
+linkColor = "#4338ca"
+borderColor = "#e4e2dc"
+showWidgetBorder = true
+showSidebarBorder = true
+baseRadius = "0.65rem"
+buttonRadius = "0.65rem"
+font = "'Segoe UI', Inter, system-ui, -apple-system, sans-serif"
+headingFont = "'Segoe UI', Inter, system-ui, -apple-system, sans-serif"
+headingFontWeights = [700, 650, 600, 600, 600, 600]
+chartCategoricalColors = ["#4338ca", "#0f766e", "#b45309", "#be185d", "#475569"]
+
+[theme.sidebar]
+backgroundColor = "#f5f4f0"
+secondaryBackgroundColor = "#ecebe6"
+
+[server]
+headless = true
+# Matches the API's QT_MAX_UPLOAD_MB, so the uploader shows the real limit.
+maxUploadSize = 20
+
+[browser]
+gatherUsageStats = false
+
+[client]
+toolbarMode = "minimal"

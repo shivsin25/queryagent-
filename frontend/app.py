@@ -6,8 +6,11 @@ st.set_page_config(
     layout="wide",
 )
 
-from ui import inject_css, require_password, sidebar  # noqa: E402  (after set_page_config)
+import embedded  # noqa: E402  (after set_page_config)
+from ui import inject_css, require_password, sidebar  # noqa: E402
 
+if embedded.enabled():  # single-process hosts such as Streamlit Community Cloud
+    embedded.start_api()
 inject_css()
 require_password()
 navigation = st.navigation(

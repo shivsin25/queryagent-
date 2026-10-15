@@ -163,6 +163,47 @@ def test_offline_api_is_reported_not_raised(api, monkeypatch):
     assert any("Cannot reach the API" in e.value or "Connection" in e.value for e in at.error)
 
 
+def test_embedded_api_serves_the_app_in_process(make_service):
+    """Single-process hosts: the UI starts the API itself, on a free port."""
+    import httpx
+
+    import embedded
+
+    url = embedded.serve(create_app(make_service()))
+    health = httpx.get(f"{url}/api/v1/health", timeout=10).json()
+    assert health["documents"] == 1
+
+
+def test_embedded_mode_is_opt_in(monkeypatch):
+    import embedded
+
+    monkeypatch.delenv("QT_EMBEDDED_API", raising=False)
+    assert not embedded.enabled()
+    monkeypatch.setenv("QT_EMBEDDED_API", "true")
+    assert embedded.enabled()
+
+
+def test_cloud_requirements_match_the_lockfile():
+    """frontend/requirements.txt (read by Streamlit Community Cloud) must not drift from
+    uv.lock; regenerate it with the command in its header when this fails."""
+    import shutil
+    import subprocess
+
+    uv = shutil.which("uv")
+    if uv is None:
+        pytest.skip("uv is not installed")
+    exported = subprocess.run(
+        [uv, "export", "--frozen", "--no-dev", "--extra", "gemini", "--extra", "openai",
+         "--no-hashes", "--no-emit-project", "--no-header"],
+        capture_output=True, text=True, check=True, cwd=FRONTEND.parent,
+    ).stdout
+    pins = lambda text: sorted(  # noqa: E731
+        line for line in text.splitlines() if line and not line.startswith(("#", " "))
+    )
+    committed = (FRONTEND / "requirements.txt").read_text(encoding="utf-8")
+    assert pins(committed) == pins(exported)
+
+
 def _gate() -> None:
     from ui import require_password
 

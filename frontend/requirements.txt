@@ -1,0 +1,510 @@
+# Dependencies for Streamlit Community Cloud, which installs the file next to the app's
+# entry point. Generated from uv.lock; regenerate with:
+#   uv export --frozen --no-dev --extra gemini --extra openai --no-hashes --no-emit-project --no-header -o frontend/requirements.txt
+aiohappyeyeballs==2.7.1
+    # via aiohttp
+aiohttp==3.14.5
+    # via
+    #   aiohttp-retry
+    #   kubernetes
+aiohttp-retry==2.9.1
+    # via kubernetes
+aiosignal==1.4.0
+    # via aiohttp
+altair==6.3.0
+    # via streamlit
+annotated-doc==0.0.5
+    # via
+    #   fastapi
+    #   typer
+annotated-types==0.8.0
+    # via pydantic
+anyio==4.15.1
+    # via
+    #   google-genai
+    #   groq
+    #   httpx
+    #   httpx2
+    #   langsmith
+    #   openai
+    #   starlette
+    #   streamlit
+    #   watchfiles
+attrs==26.1.0
+    # via
+    #   aiohttp
+    #   jsonschema
+    #   referencing
+bcrypt==5.0.0
+    # via chromadb
+build==1.6.1
+    # via chromadb
+certifi==2026.7.22
+    # via
+    #   httpcore
+    #   httpx
+    #   kubernetes
+    #   langchain-openai
+    #   requests
+cffi==2.1.1 ; platform_python_implementation != 'PyPy'
+    # via cryptography
+charset-normalizer==3.5.2
+    # via requests
+chromadb==1.5.9
+    # via query-tool
+click==8.5.0
+    # via
+    #   huggingface-hub
+    #   streamlit
+    #   uvicorn
+colorama==0.4.6 ; os_name == 'nt' or sys_platform == 'win32'
+    # via
+    #   build
+    #   loguru
+    #   tqdm
+    #   typer
+cryptography==50.0.2
+    # via google-auth
+distro==1.9.0
+    # via
+    #   google-genai
+    #   groq
+    #   langsmith
+durationpy==0.11
+    # via kubernetes
+fastapi==0.143.1
+    # via query-tool
+fastembed==0.9.0
+    # via query-tool
+filelock==4.2.0
+    # via huggingface-hub
+filetype==1.2.0
+    # via langchain-google-genai
+flatbuffers==25.12.19
+    # via onnxruntime
+frozenlist==1.8.0
+    # via
+    #   aiohttp
+    #   aiosignal
+fsspec==2026.9.0
+    # via huggingface-hub
+google-auth==2.62.0
+    # via google-genai
+google-genai==2.31.0
+    # via langchain-google-genai
+googleapis-common-protos==1.75.5
+    # via opentelemetry-exporter-otlp-proto-grpc
+groq==0.37.1
+    # via langchain-groq
+grpcio==1.84.0
+    # via
+    #   chromadb
+    #   opentelemetry-exporter-otlp-proto-grpc
+h11==0.16.0
+    # via
+    #   httpcore
+    #   httpcore2
+    #   uvicorn
+hf-xet==1.7.0 ; platform_machine == 'AMD64' or platform_machine == 'aarch64' or platform_machine == 'amd64' or platform_machine == 'arm64' or platform_machine == 'x86_64'
+    # via huggingface-hub
+httpcore==1.0.9
+    # via httpx
+httpcore2==2.13.1 ; sys_platform != 'emscripten'
+    # via httpx2
+httptools==0.9.0
+    # via uvicorn
+httpx==0.28.1
+    # via
+    #   chromadb
+    #   google-genai
+    #   groq
+    #   huggingface-hub
+    #   langchain-core
+    #   langgraph-sdk
+    #   query-tool
+httpx2==2.13.1
+    # via
+    #   langsmith
+    #   openai
+httpx2-jsfetch==1.0 ; python_full_version >= '3.12' and sys_platform == 'emscripten'
+    # via httpx2
+huggingface-hub==1.33.0
+    # via
+    #   fastembed
+    #   tokenizers
+idna==3.20
+    # via
+    #   anyio
+    #   httpx
+    #   httpx2
+    #   requests
+    #   yarl
+importlib-resources==7.1.0
+    # via chromadb
+itsdangerous==2.2.0
+    # via streamlit
+jinja2==3.1.6
+    # via
+    #   altair
+    #   pydeck
+jiter==0.17.0
+    # via openai
+jsonpatch==1.35
+    # via langchain-core
+jsonpointer==3.2.1
+    # via jsonpatch
+jsonschema==4.26.0
+    # via
+    #   altair
+    #   chromadb
+jsonschema-specifications==2025.9.1
+    # via jsonschema
+kubernetes==37.0.1
+    # via chromadb
+langchain-core==1.6.10
+    # via
+    #   langchain-google-genai
+    #   langchain-groq
+    #   langchain-openai
+    #   langchain-text-splitters
+    #   langgraph
+    #   langgraph-checkpoint
+    #   langgraph-prebuilt
+    #   langgraph-sdk
+    #   query-tool
+langchain-google-genai==4.4.2
+    # via query-tool
+langchain-groq==1.1.3
+    # via query-tool
+langchain-openai==1.7.2
+    # via query-tool
+langchain-protocol==0.0.19
+    # via
+    #   langchain-core
+    #   langgraph-sdk
+langchain-text-splitters==1.1.3
+    # via query-tool
+langgraph==1.2.15
+    # via query-tool
+langgraph-checkpoint==4.3.0
+    # via
+    #   langgraph
+    #   langgraph-prebuilt
+langgraph-prebuilt==1.1.1
+    # via langgraph
+langgraph-sdk==0.4.7
+    # via langgraph
+langsmith==0.14.8
+    # via langchain-core
+loguru==0.7.3
+    # via fastembed
+lxml==6.1.3
+    # via python-docx
+markdown-it-py==4.2.0
+    # via rich
+markupsafe==3.0.4
+    # via jinja2
+mdurl==0.1.2
+    # via markdown-it-py
+mmh3==5.3.1
+    # via
+    #   chromadb
+    #   fastembed
+multidict==7.1.0
+    # via
+    #   aiohttp
+    #   yarl
+narwhals==2.27.1
+    # via altair
+numpy==2.4.6 ; python_full_version < '3.12'
+    # via
+    #   chromadb
+    #   fastembed
+    #   onnxruntime
+    #   pandas
+    #   pydeck
+    #   streamlit
+numpy==2.5.4 ; python_full_version >= '3.12'
+    # via
+    #   chromadb
+    #   fastembed
+    #   onnxruntime
+    #   pandas
+    #   pydeck
+    #   streamlit
+oauthlib==4.0.0
+    # via requests-oauthlib
+onnxruntime==1.31.0
+    # via
+    #   chromadb
+    #   fastembed
+openai==3.31.0
+    # via langchain-openai
+opentelemetry-api==1.45.1
+    # via
+    #   chromadb
+    #   fastapi
+    #   opentelemetry-exporter-otlp-proto-grpc
+    #   opentelemetry-sdk
+    #   opentelemetry-semantic-conventions
+opentelemetry-exporter-otlp-common==0.66b1
+    # via opentelemetry-exporter-otlp-proto-grpc
+opentelemetry-exporter-otlp-proto-common==1.45.1
+    # via opentelemetry-exporter-otlp-proto-grpc
+opentelemetry-exporter-otlp-proto-grpc==1.45.1
+    # via chromadb
+opentelemetry-proto==1.45.1
+    # via
+    #   opentelemetry-exporter-otlp-proto-common
+    #   opentelemetry-exporter-otlp-proto-grpc
+opentelemetry-sdk==1.45.1
+    # via
+    #   chromadb
+    #   opentelemetry-exporter-otlp-common
+    #   opentelemetry-exporter-otlp-proto-grpc
+opentelemetry-semantic-conventions==0.66b1
+    # via opentelemetry-sdk
+orjson==3.13.0
+    # via
+    #   chromadb
+    #   langgraph-sdk
+    #   langsmith
+ormsgpack==1.12.2
+    # via langgraph-checkpoint
+overrides==7.7.0
+    # via chromadb
+packaging==26.3
+    # via
+    #   altair
+    #   build
+    #   huggingface-hub
+    #   langchain-core
+    #   langsmith
+    #   onnxruntime
+    #   streamlit
+pandas==3.0.6
+    # via streamlit
+pillow==12.3.0
+    # via
+    #   fastembed
+    #   streamlit
+propcache==0.5.4
+    # via
+    #   aiohttp
+    #   yarl
+protobuf==7.36.2
+    # via
+    #   googleapis-common-protos
+    #   onnxruntime
+    #   opentelemetry-proto
+    #   streamlit
+py-rust-stemmers==0.1.8
+    # via fastembed
+pyarrow==26.0.0
+    # via streamlit
+pyasn1==0.6.4
+    # via pyasn1-modules
+pyasn1-modules==0.4.2
+    # via google-auth
+pybase64==1.5.1
+    # via chromadb
+pycparser==3.11 ; implementation_name != 'PyPy' and platform_python_implementation != 'PyPy'
+    # via cffi
+pydantic==2.14.1
+    # via
+    #   chromadb
+    #   fastapi
+    #   google-genai
+    #   groq
+    #   kubernetes
+    #   langchain-core
+    #   langchain-google-genai
+    #   langgraph
+    #   langsmith
+    #   openai
+    #   pydantic-settings
+    #   query-tool
+pydantic-core==2.50.1
+    # via pydantic
+pydantic-settings==2.16.0
+    # via
+    #   chromadb
+    #   query-tool
+pydeck==0.9.3
+    # via streamlit
+pygments==2.21.0
+    # via rich
+pypdf==6.20.1
+    # via query-tool
+pypika==0.51.1
+    # via chromadb
+pyproject-hooks==1.3.3
+    # via build
+python-dateutil==2.9.0.post0
+    # via
+    #   kubernetes
+    #   pandas
+python-docx==1.2.0
+    # via query-tool
+python-dotenv==1.2.4
+    # via
+    #   pydantic-settings
+    #   uvicorn
+python-multipart==0.0.32
+    # via
+    #   query-tool
+    #   streamlit
+pyyaml==6.0.3
+    # via
+    #   chromadb
+    #   huggingface-hub
+    #   kubernetes
+    #   langchain-core
+    #   uvicorn
+referencing==0.37.0
+    # via
+    #   jsonschema
+    #   jsonschema-specifications
+regex==2026.9.29
+    # via tiktoken
+requests==2.34.2
+    # via
+    #   fastembed
+    #   google-auth
+    #   google-genai
+    #   kubernetes
+    #   langsmith
+    #   requests-oauthlib
+    #   requests-toolbelt
+    #   streamlit
+    #   tiktoken
+requests-oauthlib==2.0.0
+    # via kubernetes
+requests-toolbelt==1.0.0
+    # via langsmith
+rich==15.0.0
+    # via
+    #   chromadb
+    #   query-tool
+    #   typer
+rpds-py==2026.9.1
+    # via
+    #   jsonschema
+    #   referencing
+shellingham==1.5.4
+    # via typer
+six==1.17.0
+    # via python-dateutil
+sniffio==1.3.1
+    # via
+    #   google-genai
+    #   groq
+    #   langsmith
+    #   openai
+snowballstemmer==3.1.1
+    # via query-tool
+starlette==1.8.0
+    # via
+    #   fastapi
+    #   streamlit
+streamlit==1.66.0
+    # via query-tool
+tenacity==9.1.4
+    # via
+    #   chromadb
+    #   google-genai
+    #   langchain-core
+tiktoken==0.14.0
+    # via langchain-openai
+tokenizers==0.23.3
+    # via
+    #   chromadb
+    #   fastembed
+tqdm==4.70.1
+    # via
+    #   chromadb
+    #   fastembed
+    #   huggingface-hub
+truststore==0.10.5 ; sys_platform != 'emscripten'
+    # via
+    #   httpcore2
+    #   httpx2
+typer==0.27.3
+    # via
+    #   chromadb
+    #   query-tool
+typing-extensions==4.16.0
+    # via
+    #   aiohttp
+    #   aiosignal
+    #   altair
+    #   anyio
+    #   chromadb
+    #   fastapi
+    #   google-genai
+    #   groq
+    #   grpcio
+    #   httpx2
+    #   huggingface-hub
+    #   kubernetes
+    #   langchain-core
+    #   langchain-protocol
+    #   langsmith
+    #   openai
+    #   opentelemetry-api
+    #   opentelemetry-exporter-otlp-proto-grpc
+    #   opentelemetry-sdk
+    #   opentelemetry-semantic-conventions
+    #   pydantic
+    #   pydantic-core
+    #   pydantic-settings
+    #   python-docx
+    #   referencing
+    #   starlette
+    #   streamlit
+    #   typing-inspection
+typing-inspection==0.4.4
+    # via
+    #   fastapi
+    #   pydantic
+    #   pydantic-settings
+tzdata==2026.5 ; sys_platform == 'emscripten' or sys_platform == 'win32'
+    # via pandas
+urllib3==2.8.0
+    # via
+    #   kubernetes
+    #   requests
+uuid-utils==0.17.1
+    # via
+    #   langchain-core
+    #   langsmith
+uvicorn==0.54.0
+    # via
+    #   chromadb
+    #   query-tool
+    #   streamlit
+uvloop==0.23.0 ; platform_python_implementation != 'PyPy' and sys_platform != 'cygwin' and sys_platform != 'win32'
+    # via uvicorn
+watchdog==6.0.0 ; sys_platform != 'darwin'
+    # via streamlit
+watchfiles==1.3.0
+    # via uvicorn
+websocket-client==1.9.2
+    # via kubernetes
+websockets==16.1.1
+    # via
+    #   google-genai
+    #   langgraph-sdk
+    #   langsmith
+    #   streamlit
+    #   uvicorn
+win32-setctime==1.2.0 ; sys_platform == 'win32'
+    # via loguru
+xxhash==4.0.1
+    # via
+    #   langgraph
+    #   langsmith
+yarl==1.25.1
+    # via aiohttp
+zstandard==0.25.0
+    # via langsmith

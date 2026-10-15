@@ -99,40 +99,44 @@ On first start the API downloads the embedding and reranker models (about 150 MB
 fictional company, Nimbus Analytics, so you can tell that answers come from the documents
 and not from the model's own knowledge.
 
-## Deploy to Hugging Face Spaces
+## Deploy for free on Streamlit Community Cloud
 
-The `Dockerfile` runs the whole app in one container. The UI is on port 7860; the API is
-reachable only inside the container. The search models and the indexed sample documents are
-built into the image, so the app starts without downloading anything. A free Space works
-well, but anything uploaded is lost when the Space restarts.
+[Streamlit Community Cloud](https://share.streamlit.io) hosts the app from this GitHub
+repository, for free, at a public `https://<name>.streamlit.app` link. It runs a single
+Streamlit process, so the app starts the API inside that process: set
+`QT_EMBEDDED_API=true`. The whole app uses about 0.6 GB of memory, within the free plan's
+2.7 GB.
 
-1. On [huggingface.co](https://huggingface.co/new-space), create a Space: SDK **Docker**,
-   template **Blank**, hardware **CPU basic** (free).
-2. In the Space's **Settings → Variables and secrets**, add your provider and keys, for
-   example:
-   - `QT_LLM_PROVIDER=openai` and `QT_REVIEWER_PROVIDER=gemini` (variables);
-   - `OPENAI_API_KEY` and `GOOGLE_API_KEY` (secrets).
+1. Sign in at [share.streamlit.io](https://share.streamlit.io) with the GitHub account that
+   owns the repository, and choose **Create app → Deploy a public app from GitHub**.
+2. Fill in:
+   - **Repository:** this repository;
+   - **Branch:** `main`;
+   - **Main file path:** `frontend/app.py`.
+3. Open **Advanced settings**. Choose Python **3.12**, and paste your settings into
+   **Secrets**:
 
-   Also set `QT_UI_PASSWORD` (secret) if strangers shouldn't spend your budget, and
-   `QT_DAILY_BUDGET_USD` to cap it.
-3. Deploy the last commit:
-
-   ```powershell
-   .\scripts\deploy_hf_space.ps1 -Space <your-hf-username>/<space-name>
+   ```toml
+   QT_EMBEDDED_API = "true"
+   QT_LLM_PROVIDER = "openai"          # or "gemini" / "groq"
+   QT_REVIEWER_PROVIDER = "gemini"     # optional: review on another provider
+   OPENAI_API_KEY = "sk-..."
+   GOOGLE_API_KEY = "..."
+   QT_UI_PASSWORD = "choose-a-password"   # recommended on a public link
+   QT_DAILY_BUDGET_USD = "0.50"
    ```
 
-   When git asks you to sign in, give your Hugging Face username and an
-   [access token](https://huggingface.co/settings/tokens) with *write* permission as the
-   password. The Space then builds the image (a few minutes) and starts.
+4. Press **Deploy**. Installing the dependencies takes a few minutes. On its first start the
+   app downloads the search models (about 150 MB) and indexes the sample documents.
 
-The script deploys only committed code (never `.env` or `storage/`), and uses
-`deploy/huggingface/README.md` as the Space's README, because Hugging Face reads its settings
-from that file's header. Each deploy replaces the Space's contents.
+Community Cloud installs `frontend/requirements.txt`, which is generated from `uv.lock` (a
+test keeps the two in sync). The app sleeps after 12 hours without visitors and wakes up
+when someone opens the link. Its disk isn't permanent: uploads, conversations and the
+spending tally reset when the app restarts, and the sample documents are indexed again.
 
 Vercel and other serverless hosts don't fit this app. Streamlit needs a long-running server,
-the dependencies and models come to about 750 MB, and the index, conversations and spending
-ledger need a disk that persists between requests. Render or Railway with a persistent disk
-run the same `Dockerfile` if uploads must survive restarts.
+the dependencies and models come to about 750 MB, and the index needs a disk that persists
+between requests.
 
 ## Using it
 
@@ -388,6 +392,7 @@ Every setting is listed in `.env.example`. The ones you're most likely to change
 | `QT_CHUNK_SIZE` / `QT_PARENT_CHUNK_SIZE` | `400` / `1500` | Searched passages / sections the writer reads |
 | `QT_CLAIM_SUPPORT_THRESHOLD` | `-4.0` | Lowest score at which a cited sentence counts as supported |
 | `QT_UI_PASSWORD` | unset | If set, the UI asks for this password first |
+| `QT_EMBEDDED_API` | unset | `true` runs the API inside the Streamlit process (Community Cloud) |
 
 Install the extras for every provider you use in one command, for example
 `uv sync --extra gemini --extra openai`. Running `uv sync` without an extra uninstalls it.
@@ -422,13 +427,12 @@ src/query_tool/
 ├── storage/database.py       the shared SQLite file
 └── evaluation/               eval cases, deterministic metrics, runner and reports
 frontend/                     Streamlit app (talks to the API over HTTP); story.py holds the
-                              six stages and each answer's journey
+                              six stages and each answer's journey; embedded.py runs the
+                              API in-process on Streamlit Community Cloud, which installs
+                              frontend/requirements.txt
 data/sample_docs/             sample knowledge base (3 Markdown files, 1 PDF)
 data/eval/nimbus.jsonl        evaluation cases
-scripts/                      dev launcher, sample PDF generator, container start-up,
-                              Hugging Face deploy
-deploy/huggingface/           the Space's README (its configuration header)
-Dockerfile                    the app in one container (UI on 7860, API internal)
+scripts/                      dev launcher; generator for the sample PDF
 tests/                        offline tests, no API key needed
 ```
 

@@ -17,9 +17,15 @@ param(
     [Parameter(Mandatory = $true)][string]$Space,
     [switch]$DryRun  # build the deploy folder, but don't push
 )
-$ErrorActionPreference = "Stop"
-$root = Split-Path -Parent $PSScriptRoot
 
+# Native commands report failure through their exit code; git also writes ordinary progress
+# and warnings to stderr, so stderr alone must not stop the script.
+function Invoke-Git {
+    git @args
+    if ($LASTEXITCODE -ne 0) { throw "git $($args -join ' ') failed (exit $LASTEXITCODE)" }
+}
+
+$root = Split-Path -Parent $PSScriptRoot
 if (git -C $root status --porcelain) {
     Write-Warning "You have uncommitted changes. Only the last commit is deployed."
 }
@@ -28,27 +34,28 @@ $build = Join-Path ([IO.Path]::GetTempPath()) "hf-space-$sha"
 if (Test-Path $build) { Remove-Item $build -Recurse -Force }
 New-Item -ItemType Directory $build | Out-Null
 
-git -C $root archive --format=tar --output "$build.tar" HEAD
+Invoke-Git -C $root -c core.autocrlf=false archive --format=tar --output "$build.tar" HEAD
 tar -xf "$build.tar" -C $build
+if ($LASTEXITCODE -ne 0) { throw "Extracting the archive failed." }
 Remove-Item "$build.tar"
 Copy-Item "$root\deploy\huggingface\README.md" "$build\README.md" -Force
 Remove-Item "$build\docs" -Recurse -Force -ErrorAction SilentlyContinue  # screenshots
 
 Push-Location $build
 try {
-    git init -q -b main
-    git lfs install --local | Out-Null
-    git lfs track "*.pdf" "*.png" | Out-Null  # the Hub stores binary files with LFS
-    git add -A
-    git -c "user.name=$(git -C $root config user.name)" `
+    Invoke-Git init -q -b main
+    Invoke-Git config core.autocrlf false
+    Invoke-Git lfs install --local
+    Invoke-Git lfs track "*.pdf" "*.png"  # the Hub stores binary files with LFS
+    Invoke-Git add -A
+    Invoke-Git -c "user.name=$(git -C $root config user.name)" `
         -c "user.email=$(git -C $root config user.email)" `
         commit -q -m "Deploy $sha"
     if ($DryRun) {
         Write-Host "Dry run: deploy folder ready at $build" -ForegroundColor Yellow
         return
     }
-    git push --force "https://huggingface.co/spaces/$Space" main
-    if ($LASTEXITCODE -ne 0) { throw "Push to the Space failed." }
+    Invoke-Git push --force "https://huggingface.co/spaces/$Space" main
     Write-Host "Deployed $sha. Watch the build: https://huggingface.co/spaces/$Space" -ForegroundColor Green
 }
 finally {

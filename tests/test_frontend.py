@@ -163,6 +163,31 @@ def test_offline_api_is_reported_not_raised(api, monkeypatch):
     assert any("Cannot reach the API" in e.value or "Connection" in e.value for e in at.error)
 
 
+def _gate() -> None:
+    from ui import require_password
+
+    require_password()
+    import streamlit as st
+
+    st.markdown("the app")
+
+
+def test_password_gate(monkeypatch):
+    monkeypatch.delenv("QT_UI_PASSWORD", raising=False)
+    open_app = AppTest.from_function(_gate).run()
+    assert any(m.value == "the app" for m in open_app.markdown)  # no password set: no gate
+
+    monkeypatch.setenv("QT_UI_PASSWORD", "s3cret")
+    at = AppTest.from_function(_gate).run()
+    assert not any(m.value == "the app" for m in at.markdown)
+    at.text_input[0].input("wrong")
+    at.button[0].click().run()
+    assert at.error and not any(m.value == "the app" for m in at.markdown)
+    at.text_input[0].input("s3cret")
+    at.button[0].click().run()
+    assert any(m.value == "the app" for m in at.markdown)
+
+
 def test_knowledge_base_and_how_it_works_pages(api):
     docs = _page("documents.py")
     assert not docs.exception

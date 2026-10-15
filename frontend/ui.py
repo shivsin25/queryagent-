@@ -1,6 +1,8 @@
 """Shared layout pieces: the design system, sidebar, and rendering of an answer."""
 
 import contextlib
+import hmac
+import os
 
 import altair as alt
 import pandas as pd
@@ -145,6 +147,24 @@ def escape_dollars(text: str) -> str:
 
 def inject_css() -> None:
     st.markdown(_CSS, unsafe_allow_html=True)
+
+
+def require_password() -> None:
+    """Ask for QT_UI_PASSWORD before showing the app, if one is set (e.g. on a public host,
+    so strangers can't spend the LLM budget). Does nothing otherwise."""
+    expected = os.getenv("QT_UI_PASSWORD")
+    if not expected or st.session_state.get("_authenticated"):
+        return
+    html(BRAND_HTML)
+    with st.form("login"):
+        password = st.text_input("Password", type="password")
+        entered = st.form_submit_button("Enter", type="primary")
+    if entered:
+        if hmac.compare_digest(password.encode(), expected.encode()):
+            st.session_state["_authenticated"] = True
+            st.rerun()
+        st.error("Wrong password.")
+    st.stop()
 
 
 def html(markup: str) -> None:

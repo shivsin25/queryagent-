@@ -1,5 +1,8 @@
 # Store text with LF line endings in the repository; check out with the platform's own.
 * text=auto
 *.ps1 text eol=crlf
+# Run inside Linux containers: a Windows line ending would break them.
+*.sh text eol=lf
+Dockerfile text eol=lf
 *.pdf binary
 *.png binary

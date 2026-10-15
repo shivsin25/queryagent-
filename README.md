@@ -99,6 +99,41 @@ On first start the API downloads the embedding and reranker models (about 150 MB
 fictional company, Nimbus Analytics, so you can tell that answers come from the documents
 and not from the model's own knowledge.
 
+## Deploy to Hugging Face Spaces
+
+The `Dockerfile` runs the whole app in one container. The UI is on port 7860; the API is
+reachable only inside the container. The search models and the indexed sample documents are
+built into the image, so the app starts without downloading anything. A free Space works
+well, but anything uploaded is lost when the Space restarts.
+
+1. On [huggingface.co](https://huggingface.co/new-space), create a Space: SDK **Docker**,
+   template **Blank**, hardware **CPU basic** (free).
+2. In the Space's **Settings → Variables and secrets**, add your provider and keys, for
+   example:
+   - `QT_LLM_PROVIDER=openai` and `QT_REVIEWER_PROVIDER=gemini` (variables);
+   - `OPENAI_API_KEY` and `GOOGLE_API_KEY` (secrets).
+
+   Also set `QT_UI_PASSWORD` (secret) if strangers shouldn't spend your budget, and
+   `QT_DAILY_BUDGET_USD` to cap it.
+3. Deploy the last commit:
+
+   ```powershell
+   .\scripts\deploy_hf_space.ps1 -Space <your-hf-username>/<space-name>
+   ```
+
+   When git asks you to sign in, give your Hugging Face username and an
+   [access token](https://huggingface.co/settings/tokens) with *write* permission as the
+   password. The Space then builds the image (a few minutes) and starts.
+
+The script deploys only committed code (never `.env` or `storage/`), and uses
+`deploy/huggingface/README.md` as the Space's README, because Hugging Face reads its settings
+from that file's header. Each deploy replaces the Space's contents.
+
+Vercel and other serverless hosts don't fit this app. Streamlit needs a long-running server,
+the dependencies and models come to about 750 MB, and the index, conversations and spending
+ledger need a disk that persists between requests. Render or Railway with a persistent disk
+run the same `Dockerfile` if uploads must survive restarts.
+
 ## Using it
 
 ### The app
@@ -352,6 +387,7 @@ Every setting is listed in `.env.example`. The ones you're most likely to change
 | `QT_RERANK_K` | `12` | Candidates the cross-encoder scores |
 | `QT_CHUNK_SIZE` / `QT_PARENT_CHUNK_SIZE` | `400` / `1500` | Searched passages / sections the writer reads |
 | `QT_CLAIM_SUPPORT_THRESHOLD` | `-4.0` | Lowest score at which a cited sentence counts as supported |
+| `QT_UI_PASSWORD` | unset | If set, the UI asks for this password first |
 
 Install the extras for every provider you use in one command, for example
 `uv sync --extra gemini --extra openai`. Running `uv sync` without an extra uninstalls it.
@@ -389,7 +425,10 @@ frontend/                     Streamlit app (talks to the API over HTTP); story.
                               six stages and each answer's journey
 data/sample_docs/             sample knowledge base (3 Markdown files, 1 PDF)
 data/eval/nimbus.jsonl        evaluation cases
-scripts/                      dev launcher; generator for the sample PDF
+scripts/                      dev launcher, sample PDF generator, container start-up,
+                              Hugging Face deploy
+deploy/huggingface/           the Space's README (its configuration header)
+Dockerfile                    the app in one container (UI on 7860, API internal)
 tests/                        offline tests, no API key needed
 ```
 

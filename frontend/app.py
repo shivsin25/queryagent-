@@ -6,9 +6,10 @@ st.set_page_config(
     layout="wide",
 )
 
-from ui import inject_css, sidebar  # noqa: E402  (set_page_config must run first)
+from ui import inject_css, require_password, sidebar  # noqa: E402  (after set_page_config)
 
 inject_css()
+require_password()
 navigation = st.navigation(
     [
         st.Page("views/chat.py", title="Ask", icon=":material/forum:", default=True),

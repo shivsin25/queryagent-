@@ -4,7 +4,8 @@ __pycache__/
 .env
 .pytest_cache/
 .ruff_cache/
-storage/
+# Local data (index, database, models) in the project root only; src/query_tool/storage is code.
+/storage/
 *.egg-info/
 dist/
 build/

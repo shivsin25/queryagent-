@@ -10,6 +10,38 @@ from query_tool.services.llm import extract_json, invoke_structured
 from tests.conftest import ScriptedChatModel, review_json
 
 
+def test_pasted_keys_lose_stray_whitespace_and_quotes():
+    from query_tool.config.settings import Settings
+
+    settings = Settings(_env_file=None, llm_provider=" openai\n",
+                        openai_api_key="sk-proj-abc123 ", google_api_key="  ")
+    assert settings.llm_provider == "openai"
+    assert settings.openai_api_key.get_secret_value() == "sk-proj-abc123"
+    assert settings.google_api_key is None
+    quoted = Settings(_env_file=None, groq_api_key='"gsk_xyz"\r\n')
+    assert quoted.groq_api_key.get_secret_value() == "gsk_xyz"
+
+
+def test_logs_never_contain_api_keys():
+    import logging
+
+    from query_tool.core.logging import RedactingFormatter, redact
+
+    line = ("Illegal header value b'Bearer sk-proj-GIQvfIabcdefghijklmnop '; google "
+            "AIzaSyA1234567890abcdefghijk; groq gsk_abcdefghijklmnop1234")
+    cleaned = redact(line)
+    assert "sk-proj" not in cleaned and "AIza" not in cleaned and "gsk_" not in cleaned
+    assert "Bearer [redacted]" in cleaned
+
+    try:
+        raise RuntimeError("Bearer sk-proj-0123456789abcdefghij")
+    except RuntimeError:
+        record = logging.LogRecord("t", logging.ERROR, __file__, 1, "failed", None,
+                                   exc_info=__import__("sys").exc_info())
+    formatted = RedactingFormatter("%(message)s").format(record)
+    assert "0123456789abcdefghij" not in formatted and "[redacted]" in formatted
+
+
 def test_clean_query_normalises_whitespace_and_control_chars():
     assert clean_query("  what\tis\x00 the   SLA?\n") == "what is the SLA?"
 

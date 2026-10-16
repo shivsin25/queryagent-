@@ -2,7 +2,7 @@ from functools import lru_cache
 from pathlib import Path
 from typing import Literal
 
-from pydantic import AliasChoices, Field, SecretStr
+from pydantic import AliasChoices, Field, SecretStr, field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 PROJECT_ROOT = Path(__file__).resolve().parents[3]
@@ -115,6 +115,21 @@ class Settings(BaseSettings):
     auto_seed_samples: bool = True
     sample_docs_dir: Path = PROJECT_ROOT / "data" / "sample_docs"
     eval_dataset: Path = PROJECT_ROOT / "data" / "eval" / "nimbus.jsonl"
+
+    @field_validator(
+        "groq_api_key", "google_api_key", "openai_api_key", "llm_provider", "reviewer_provider",
+        mode="before",
+    )
+    @classmethod
+    def _strip_pasted_whitespace(cls, value: object) -> object:
+        """Keys pasted into a dashboard often carry a trailing space or newline, which makes
+        every request fail ("Illegal header value"). Strip it, and treat a blank key as none."""
+        if isinstance(value, SecretStr):
+            value = value.get_secret_value()
+        if isinstance(value, str):
+            value = value.strip().strip("\"'").strip()
+            return value or None
+        return value
 
     @property
     def resolved_primary_model(self) -> str:
